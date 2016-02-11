@@ -1,5 +1,5 @@
-Das Tool bietet eine Klausurkonfiguration (Typ, Anzahl, Punkte, Eigenschaften der Fragen), aus der ein Graph erstellt wird, welcher die Erreichten Punkte in abhängigkeit von seinem Wissen darstellt.
+Das Tool bietet eine Klausurkonfiguration (Typ, Anzahl, Punkte, Eigenschaften der Fragen), aus der ein Graph erstellt wird, welcher die voraussichtlich erreichten Punkte in Abhängigkeit vom Wissen des Testteilnehmers darstellt.
 
-Das Tool soll helfen, einen Bewertungsmaßstab für Klausuren mit diversen Fragetypen zu finden, der das gezeigte Wissen berücksichtigt (z.B. Bestanden hat, der 50% des WISSENS hat), statt als Basis einen festen Prozentsatz der erreichten Punkte zu nutzen.
+Das Tool soll helfen, einen Bewertungsmaßstab für Klausuren mit diversen Fragetypen zu finden, der das gezeigte Wissen berücksichtigt, statt als Basis einen festen Prozentsatz der erreichten Punkte zu nutzen  (z.B. Bestehensgrenze bei 50% des WISSENS statt bei 50% der Punkte).
 
-Grundlage für die Berechnungen ist die Ratewahrscheinlichkeit der einzelnen Fragetypen, von der ausgehend Erwartungswert und Varianz der erreichbaren Punkte für alle verwendeten Fragetypen berechnet und zu einer einzelnen Kurve für die Klausur aggregiert werden.
+Grundlage für die Berechnungen ist die Ratewahrscheinlichkeit der einzelnen Fragetypen, von der ausgehend Erwartungswert und Varianz der erreichbaren Punkte pro Frage berechnet und zu einer Kurve für die Klausur aggregiert werden.
