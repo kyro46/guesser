@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titel</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script src="jsxgraphcore.js"></script>
+	<link rel="stylesheet" type="text/css" href="jsxgraph.css">
+	</head>
+
+  <body>
+
+<fieldset id="klausurgenerator">
+    <legend>Klausur&uuml;bersicht</legend>
+</fieldset>
+<input type="button" value="Graph generieren" class="add" id="preview" />
+<input type="button" value="Frage hinzuf&uuml;gen" class="add" id="add" />
+
+<script>
+	
+	function qstSpecific(qst) {
+    var value = qst.value; 
+	var parentTag = $( qst ).closest("div").attr("id");
+	
+		switch (value) {
+			case 'sc':
+			case 'im_sc':
+			case 'cloze_sc':
+			case 'an':
+			var answers = $("<input type=\"number\" class=\"alternatives\" placeholder=\"Alternativen\" />");
+				$( '#' + parentTag).find("input").slice(3).remove();
+				$( '#' + parentTag ).append(answers);
+				console.log(parentTag);
+				break;
+			case 'mc':
+			case 'im_mc':
+				var answers = $("<input type=\"number\" class=\"alternatives\" placeholder=\"Alternativen\" />");
+				var correctAlternatives = ""; //$("<input type=\"number\" class=\"correctAlternatives\" placeholder=\"Korr. Alternativen\" />");
+				$( '#' + parentTag).find("input").slice(3).remove();
+				$( '#' + parentTag ).append(answers);
+				$( '#' + parentTag ).append(correctAlternatives);
+				console.log(parentTag);
+				break;
+			case 'zu':
+				var def = $("<input type=\"number\" class=\"definitions\" placeholder=\"Definitionen\" />");
+				var term = $("<input type=\"number\" class=\"terms\" placeholder=\"Terme\" />");
+				var pairs = $("<input type=\"number\" class=\"pairs\" placeholder=\"Zuordnungen\" />");
+				$( '#' + parentTag).find("input").slice(3).remove();
+				$( '#' + parentTag ).append(def);
+				$( '#' + parentTag ).append(term);
+				$( '#' + parentTag ).append(pairs);
+				console.log(parentTag);
+				break;
+			case 'cloze_offen':
+				$( '#' + parentTag).find("input").slice(3).remove();
+				console.log(parentTag);
+				break;
+			case '1':
+				$( '#' + parentTag).find("input").slice(3).remove();
+				console.log(parentTag);
+				break;
+		}
+	}
+
+	$(document).ready(function() {
+
+		//verkuerzte Liste
+		$qst_types_list = 
+				'<option value="0" selected>Fragentyp w&auml;hlen</option> \
+				<option value="sc" >Single Choice Frage</option> \
+				<option value="mc" >Multiple Choice Frage</option> \
+				<option value="im_sc" >ImageMap-Frage (Single Select)</option> \
+				<option value="im_mc" >ImageMap-Frage (Multiple Select)</option> \
+				<option value="cloze_sc" >L&uuml;ckentext - Auswahll&uuml;cke</option> \
+				<option value="cloze_offen" >L&uuml;ckentext - Numerisch/Text</option> \
+				<option value="an" >Anordnungsfrage</option> \
+				<option value="zu" >Zuordnungsfrage</option> \
+				<option value="1" >Sonstiger (offener) Fragetyp</option>'
+
+	<!--	$qst_types_list = 
+				'<option value="0" selected>Fragentyp w&auml;hlen</option> \
+				<option value="sc" >Single Choice Frage</option> \
+				<option value="mc" >Multiple Choice Frage</option> \
+				<option value="15" >Fehlertext</option> \
+				<option value="im_sc" >ImageMap-Frage (Single Select)</option> \
+				<option value="im_mc" >ImageMap-Frage (Multiple Select)</option> \
+				<option value="cloze" >L&uuml;ckentext-Frage</option> \
+				<option value="9" >Numerische Frage</option> \
+				<option value="18" >Formelfrage</option> \
+				<option value="10" >Text-Teilmenge</option> \
+				<option value="5" >Anordnungsfrage</option> \
+				<option value="13" >Anordnungsfrage (Horizontal)</option> \
+				<option value="4" >Zuordnungsfrage</option> \
+				<option value="8" >Freitext-Frage</option> \
+				<option value="14" >Datei hochladen</option> \
+				<option value="12" >Flash-Frage</option> \
+				<option value="7" >Java-Applet-Frage</option> \
+				<option value="17" >Zeichenaufgabe</option> \
+				<option value="16" >JSME-Frage</option> \
+				<option value="19" >Infotext/Restudy</option>'
+		-->		
+		
+		$("#add").click(function() {
+			//var intId = $("#klausurgenerator div").length + 1;
+			var intId = Math.floor((Math.random() * 1000) + 1); 
+			var fieldWrapper = $("<div class=\"fieldwrapper\" id=\"field" + intId + "\"/>");
+			
+			var removeButton = $("<input type=\"button\" class=\"remove\" value=\"-\" />");
+			removeButton.click(function() {
+				$(this).parent().remove();
+			});
+			
+			var qstType = $("<select class=\"fieldtype\" onchange=\"qstSpecific(this)\">" + $qst_types_list + "</select>");
+
+			var qstCount = $("<input type=\"number\" class=\"fieldcount\" placeholder=\"Anzahl\" />");
+			
+			var qstPoints = ""; //$("<input type=\"number\" class=\"fieldname\" placeholder=\"Max. Punkte\" />");
+
+			fieldWrapper.append(removeButton);
+			fieldWrapper.append(qstType);
+			fieldWrapper.append(qstCount)
+			fieldWrapper.append(qstPoints);
+			$("#klausurgenerator").append(fieldWrapper);
+		});
+
+		$("#preview").click(function() {
+			$("#graph_output").remove();
+			var fieldSet = $("<fieldset id=\"graph_output\"><legend>Grafische Darstellung</legend></fieldset>");
+			$("#klausurgenerator div").each(function() {
+				var id = "input" + $(this).attr("id").replace("field","");
+				var label = $("<label for=\"" + id + "\">" + $(this).find("input.fieldname").first().val() + "</label>");
+				var input;
+				switch ($(this).find("select.fieldtype").first().val()) {
+					case "checkbox":
+						input = $("<input type=\"checkbox\" id=\"" + id + "\" name=\"" + id + "\" />");
+						break;
+					case "textbox":
+						input = $("<input type=\"text\" id=\"" + id + "\" name=\"" + id + "\" />");
+						break;
+					case "textarea":
+						input = $("<textarea id=\"" + id + "\" name=\"" + id + "\" ></textarea>");
+						break;    
+				}
+				fieldSet.append(label);
+				fieldSet.append(input);			
+			});
+			
+			/* this is where the magic happens
+			 * 1. get data from qstform
+			 * 2. set formulas for every qst
+			 * 3. fill data from qstform into formulas
+			 * 4. add formulas and plot to graph
+			 */
+
+			var graph_box =  "<div id=\"jxgbox\" class=\"jxgbox\" style=\"width:700px; height:500px;\"></div><div id=\"debug\" style=\"display:none;\"></div>";
+			fieldSet.append(graph_box); 
+			
+			$("body").append(fieldSet);
+
+	        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-0,111,1,-5], axis:true});
+	        b1axisx = board.create('axis', [[0,0], [1,0]], {});
+	        b1axisy = board.create('axis', [[0,0], [0,1]], {});
+
+	        //var input = board.create('input', [-4, 7, 'sin(x)*x', 'f(x)='], {});
+	        var f = board.jc.snippet("6*20*((x+1)/2)^6", true, 'x', false);
+	        var graph = board.create('functiongraph',[f,
+	                function() {
+	                  var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
+	                  return c.usrCoords[1];
+	                },
+	                function() {
+	                  var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[board.canvasWidth,0],board);
+	                  return c.usrCoords[1];
+	                }
+	              ]);
+
+	        //board.create('text', [1, 6.7, '<button onclick="updateGraph()">Update graph</button>']);
+
+	        var updateGraph = function() {
+	            graph.Y = board.jc.snippet(input.Value(), true, 'x', false);
+	            graph.updateCurve();
+	            board.update();
+	        }
+			updateGraph();
+			
+		});
+	});
+
+</script>
+</body>
+</html>
